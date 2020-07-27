@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Spring Boot App</title>
+    
+    <!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+	<!-- jQuery library -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+	<!-- Latest compiled JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/app.js"></script>
+</head>
+<body onload="load()">
+<div id="newTaskForm" class="container">
+<b>Add a new task</b>
+<table class="table">
+    <tr>
+        <td>Task Title: </td>
+        <td><input type="text" id="taskTitle" class="form-control"></td>
+    </tr>
+    <tr>
+        <td>Task Description: </td>
+        <td><input type="text" id="taskDescription" class="form-control">
+        <input type="button" id="addTask" value="Add Task" onclick="Javascript:addTask()" class="btn btn-primary"></td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+    </tr>
+</table>
+</div>
+<div id="tasksDiv" class="container">
+<b>Already pending tasks</b>
+<table id="tasksTable"  border="1" class="table">
+    <tr>
+        <td><b>Task ID</b></td>
+        <td><b>Task Title</b></td>
+        <td><b>Task Description</b></td>
+        <td><b>Actions</b></td>
+    </tr>
+</table>
+</div>
+</body>
+</html>
