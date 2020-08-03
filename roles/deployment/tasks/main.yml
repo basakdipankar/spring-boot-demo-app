@@ -2,6 +2,8 @@
   docker_container:
     name: "{{ app_img }}"
     image: "dipankar435/{{ app_img }}"
+    pull: true
+    restart_policy: always
     published_ports:
       - "8080:{{ app_port }}"
     detach: true
