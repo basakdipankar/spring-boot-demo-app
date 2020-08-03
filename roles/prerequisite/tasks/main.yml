@@ -1,0 +1,10 @@
+- name: Install all the required packages which are specified in list_of_packages file
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ lookup('file', 'list_of_packages').splitlines() }}"
+
+- name: Install multi python packages with version specifiers
+  pip:
+    name:
+      - docker

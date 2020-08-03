@@ -1,0 +1,122 @@
+# Reference: https://docs.ansible.com/ansible/latest/scenario_guides/guide_gce.html
+
+- name: Create an instance
+  hosts: localhost
+  gather_facts: no
+  vars:
+      gcp_project: wise-coyote-281220
+      gcp_cred_kind: serviceaccount
+      # gcp_cred_file: ./key/private.json
+      gcp_cred_file: "{{ lookup('env','gcp_cred_file') }}"
+      zone: "us-central1-a"
+      region: "us-central1"
+      app_img: "springbootapp"
+      app_port: "8885"
+  tasks:
+   - name: Install required python packages
+     pip:
+       name:
+         - requests
+         - google-auth
+         
+   - name: Create a disk
+     gcp_compute_disk:
+         name: '{{ app_img }}-disk-instance'
+         size_gb: 10
+         source_image: 'projects/ubuntu-os-cloud/global/images/family/ubuntu-1604-lts'
+         zone: "{{ zone }}"
+         project: "{{ gcp_project }}"
+         auth_kind: "{{ gcp_cred_kind }}"
+         service_account_file: "{{ gcp_cred_file }}"
+         scopes:
+           - https://www.googleapis.com/auth/compute
+         state: present
+     register: disk
+     
+   - name: create a network
+     gcp_compute_network:
+         name: 'network-instance'
+         project: "{{ gcp_project }}"
+         auth_kind: "{{ gcp_cred_kind }}"
+         service_account_file: "{{ gcp_cred_file }}"
+         scopes:
+           - https://www.googleapis.com/auth/compute
+         state: present
+     register: network
+     
+   - name: create a firewall
+     gcp_compute_firewall:
+       name: 'app-port-ssh'
+       allowed:
+         - ip_protocol: tcp
+           ports:
+           - '22'
+           - '8080'
+       network: "{{ network }}"
+       project: "{{ gcp_project }}"
+       auth_kind: "{{ gcp_cred_kind }}"
+       service_account_file: "{{ gcp_cred_file }}"
+       state: present
+       
+   - name: create a address
+     gcp_compute_address:
+         name: '{{ app_img }}-address-instance'
+         region: "{{ region }}"
+         project: "{{ gcp_project }}"
+         auth_kind: "{{ gcp_cred_kind }}"
+         service_account_file: "{{ gcp_cred_file }}"
+         scopes:
+           - https://www.googleapis.com/auth/compute
+         state: present
+     register: address
+     
+   - name: create a instance
+     gcp_compute_instance:
+         state: present
+         name: "{{ app_img }}-instance"
+         machine_type: f1-micro
+         metadata:
+           ssh-keys: "jenkins-gcp:{{ lookup('file', lookup('env','ansible_gcp_ssh_key_file')) }}"
+         disks:
+           - auto_delete: true
+             boot: true
+             source: "{{ disk }}"
+         network_interfaces:
+             - network: "{{ network }}"
+               access_configs:
+                 - name: 'External NAT'
+                   nat_ip: "{{ address }}"
+                   type: 'ONE_TO_ONE_NAT'
+         zone: "{{ zone }}"
+         project: "{{ gcp_project }}"
+         auth_kind: "{{ gcp_cred_kind }}"
+         service_account_file: "{{ gcp_cred_file }}"
+         scopes:
+           - https://www.googleapis.com/auth/compute
+     register: instance
+
+   - name: Wait for SSH to come up
+     # wait_for: host={{ address.address }} port=22 delay=10 timeout=300
+     wait_for: 
+       host: "{{ address.address }}"
+       port: 22
+       state: "started"
+       connect_timeout: 30
+       delay: 10
+       timeout: 300
+
+   - name: Add host to groupname
+     add_host: 
+       hostname: "{{ address.address }}"
+       groupname: "new_instances"
+       ansible_ssh_extra_args: "-o StrictHostKeyChecking=no"
+       ansible_ssh_user: "jenkins-gcp"
+
+- name: Manage new instances
+  hosts: "new_instances"
+  connection: ssh
+  become: yes
+  become_method: sudo
+  roles:
+    - role: prerequisite
+    - role: deployment

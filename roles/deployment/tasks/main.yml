@@ -1,0 +1,10 @@
+- name: Create a data container
+  docker_container:
+    name: "{{ app_img }}"
+    image: "dipankar435/{{ app_img }}"
+    published_ports:
+      - "8080:{{ app_port }}"
+    detach: true
+    restart_policy: on-failure
+    interactive: true
+    state: started
