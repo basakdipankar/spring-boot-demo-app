@@ -120,3 +120,6 @@
   roles:
     - role: prerequisite
     - role: deployment
+      vars:
+        app_img: "springbootapp"
+        app_port: "8885"
