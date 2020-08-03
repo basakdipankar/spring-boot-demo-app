@@ -3,6 +3,11 @@
     name: "{{ item }}"
     state: present
   loop: "{{ lookup('file', 'list_of_packages').splitlines() }}"
+  
+- name: pip self-update
+  pip:
+    name: pip
+    state: latest
 
 - name: Install multi python packages with version specifiers
   pip:
