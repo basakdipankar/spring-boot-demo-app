@@ -10,3 +10,10 @@
     restart_policy: on-failure
     interactive: true
     state: started
+    
+    
+- name: Clean up Docker images
+  docker_prune:
+    images: yes
+    images_filters:
+      dangling: false
