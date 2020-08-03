@@ -27,11 +27,11 @@ pipeline {
             }
         }
         
-        stage('Checkout') {
+        /*stage('Checkout') {
             steps {
                 git credentialsId: 'github_token', url: 'https://github.com/dbasak2013/spring-boot-app.git'
             }
-        }
+        }*/
         
         stage('Build') {
             steps {
