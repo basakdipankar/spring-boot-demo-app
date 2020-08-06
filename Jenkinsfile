@@ -100,7 +100,7 @@ pipeline {
                 ansible_gcp_ssh_key_file=credentials("ansible_gcp_ssh_keys")
             }
             steps {
-                sh "ansible-playbook -vvvv gcp_ansible_deployment.yml"
+                sh "ansible-playbook gcp_ansible_deployment.yml"
             }
         }
     }
