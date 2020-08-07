@@ -70,7 +70,7 @@ pipeline {
             }
             post {
                 failure {
-                    mail bcc: '', body: "<b>Example</b><br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> URL build: <a>${env.BUILD_URL}</a>", cc: '', charset: 'UTF-8', from: 'Jenkins CI <dipankar435@yahoo.com>', mimeType: 'text/html', replyTo: '', subject: "ERROR CI: Project name -> ${env.JOB_NAME}", to: 'dipankar435@yahoo.com';
+                    mail bcc: '', body: "<b>Example</b><br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> URL build: <a>${env.BUILD_URL}</a>", cc: '', charset: 'UTF-8', from: 'Jenkins CI <dipankar435@yahoo.com>', mimeType: 'text/html', replyTo: '', subject: "ERROR CI: Project name -> ${env.JOB_NAME}", to: 'dbasak2022@gmail.com';
                 }
             }
         }
